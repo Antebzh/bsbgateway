@@ -9,10 +9,13 @@ Functionalities offered:
 
 ## Hardware
 
-You need hardware to interface with the bus. In priniple, a serial port and a level converter / galvanic decoupler is required.
-The circuit that I use is drawn [here](doc/hardware.md), but not recommended for rebuilding.
+You need hardware to interface with the bus. In principle, a serial port and a level converter / galvanic decoupler is required.
 
-The serial port driver evaluates the `CTS` (clear-to-send) pin of the RS232 in order to check if the bus is free. Depending on your circuit, you may want to change the settings (esp. invert/no invert) in ([bsb_comm.py](bsbgateway/bsb/bsb_comm.py)), around line 60.
+For a Pi zero W, you can use https://github.com/fredlcore/bsb_lan/blob/master/schematics/BSB-Board%20on%20Raspberry%20Pi%202.jpg
+Be sure that the gpio18 is Up :
+gpio mode 1 out
+gpio write 1 1
+
 
 ## Installation
 
