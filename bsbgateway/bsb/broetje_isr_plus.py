@@ -83,13 +83,9 @@ groups = [
         BsbFieldTemperature(0x593D0D2E, 2884, u"Température extérieure blocage d'appoint",min=-10, max=15,**RW ),
         BsbFieldTemperature(0x2d3d0592, 714, u'Consigne de protection hors-gel',min=6, max=16, **RW),
         BsbFieldTemperature(0x053D05F1, 6100, u'Décalage sonde extérieure',min=-3, max=3, **RW),
-       # BsbFieldTemperature(0x2d3d05f6, 720, u'Pente courbe de chauffe',min=0.1, max=4 , **RW),
-       # BsbField(0x2d3d0610, 721, u'Translation courbe de chauffe a configurer',  min=-4.5, max=4.5, **RW),
-
         BsbFieldChoice(0x2d3d060b, 726, u'Auto-adaptation de la courbe de chauffe',choices=['Aus', 'Ein'], **RW ),
         BsbFieldTemperature(0x213d0662, 741, u'Température de départ maximum (PC : 50°C )', min=8, max=50, **RW),
         BsbFieldInt32(0x2d3d0603, 750, u'Influence de l ambiance %', unit='%',**RW),
-     #   BsbFieldTemperature(0x313d06ba, 1612, u'Reduziertsollwert', min=8, max=40, **RW),
            ]),   
     Group(1600, "1600 ECS", [
         # Menü Trinkwasser
