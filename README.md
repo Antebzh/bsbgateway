@@ -13,7 +13,9 @@ You need hardware to interface with the bus. In principle, a serial port and a l
 
 For a Pi zero W, you can use https://github.com/fredlcore/bsb_lan/blob/master/schematics/BSB-Board%20on%20Raspberry%20Pi%202.jpg
 Be sure that the gpio18 is Up :
+
 gpio mode 1 out
+
 gpio write 1 1
 
 
