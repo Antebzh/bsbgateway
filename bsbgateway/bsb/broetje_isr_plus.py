@@ -48,7 +48,7 @@ _choices_heizkreis = {
     111: u'Einschaltopt + Schnellaufheiz',
     112: u'Einschaltoptimierung',
     113: u'Schnellaufheizung',
-    114: u'Heizbetrieb Komfort',
+    114: u'Heizbetrieb Comfort',
     115: u'Ausschaltoptimierung',
     116: u'Heizbetrieb Reduziert',
     101: u'Raumfrostschutz aktiv',
@@ -70,7 +70,28 @@ class Group(object):
         o.fields = fields
 
 groups = [
-    Group(1600, "1600 Trinkwasser", [
+
+    Group(1601, "XXXX PARAMETRES PRINCIPAUX", [
+        BsbFieldTemperature(0x2d3d051e, 8740, u' Température ambiante ', ),
+        BsbFieldTemperature(0x053d0521, 8700, u' Température extérieure', ),
+        BsbFieldChoice(0x053D09B5, 8400, u'Etat compresseur ', choices={0:'= OFF', 255:'= ON'}),
+        BsbFieldChoice(0x053D0AD1, 8402, u'Etat appoint 1 ', choices={0:'= OFF', 255:'= ON'}),
+        BsbFieldChoice(0x053D09BE, 8403, u'Etat appoint 2 ', choices={0:'= OFF', 255:'= ON'}),
+        BsbFieldInt8(0x053D0D2A, 8413, u'Modulation compresseur ', unit='%'),
+        BsbFieldTemperature(0x2d3d058e, 710, u'Température de confort',min=20, max=25,**RW ),
+        BsbFieldTemperature(0x2d3d0590, 712, u'Température éco', min=18, max=23,**RW),
+        BsbFieldTemperature(0x593D0D2E, 2884, u"Température extérieure blocage d'appoint",min=-10, max=15,**RW ),
+        BsbFieldTemperature(0x2d3d0592, 714, u'Consigne de protection hors-gel',min=6, max=16, **RW),
+        BsbFieldTemperature(0x053D05F1, 6100, u'Décalage sonde extérieure',min=-3, max=3, **RW),
+       # BsbFieldTemperature(0x2d3d05f6, 720, u'Pente courbe de chauffe',min=0.1, max=4 , **RW),
+       # BsbField(0x2d3d0610, 721, u'Translation courbe de chauffe a configurer',  min=-4.5, max=4.5, **RW),
+
+        BsbFieldChoice(0x2d3d060b, 726, u'Auto-adaptation de la courbe de chauffe',choices=['Aus', 'Ein'], **RW ),
+        BsbFieldTemperature(0x213d0662, 741, u'Température de départ maximum (PC : 50°C )', min=8, max=50, **RW),
+        BsbFieldInt32(0x2d3d0603, 750, u'Influence de l ambiance %', unit='%',**RW),
+     #   BsbFieldTemperature(0x313d06ba, 1612, u'Reduziertsollwert', min=8, max=40, **RW),
+           ]),   
+    Group(1600, "1600 ECS", [
         # Menü Trinkwasser
         BsbFieldTemperature(0x313d06b9, 1610, u'Nennsollwert', min=23, max=65, **RW),
         BsbFieldTemperature(0x313d06ba, 1612, u'Reduziertsollwert', min=8, max=40, **RW),
@@ -110,7 +131,6 @@ groups = [
         BsbFieldTemperature(0x253D077E, 1663, u'Trinkwasser Zirkulationssollwert', min=8, max=40, **RW),
         BsbFieldChoice(0x053D0E84, 1680, u'Trinkwasser Betriebsartumschaltung', choices=['Keine', 'Aus', 'Ein'], **RW),
     ]),
-        
     Group(3800, "3800 Solar", [
         # Menü Solar
         BsbFieldTemperature(0x493D085D, 3810, u'Temperaturdifferenz EIN', min=4, max=40, **RW),
@@ -153,11 +173,11 @@ groups = [
         BsbFieldInt16(0x053D0F93, 3887, u'Impulseinheit Ertrag', unit=u'l', divisor=10.0, min=0, max=100, **RW),
     ]),
         
-    Group(8000, u"8000 Status", [
+    Group(8000, u"8000 Etats", [
         # FIXME: in the list with 0x053d07a4
-        BsbFieldChoice(0x053d07a3, 8000, u'Status Heizkreis 1', choices=_choices_heizkreis),
+        BsbFieldChoice(0x053d07a3, 8000, u'Status circuit 1', choices=_choices_heizkreis),
         # FIXME: in the list with 0x053d07a6
-        BsbFieldChoice(0x053d07a5, 8001, u'Status Heizkreis 2', choices=_choices_heizkreis),
+        BsbFieldChoice(0x053d07a5, 8001, u'Status circuit 2', choices=_choices_heizkreis),
         BsbFieldChoice(0x053d07a7, 8002, u'Status Heizkreis P', choices=_choices_heizkreis),
         # FIXME: logically it should be 0x053d07a1 but this works, too. maybe the last bit is ignored
         # or has another use?
@@ -195,7 +215,7 @@ groups = [
             8  : u'Gesperrt, Manuell',
             172: u'Gesperrt, Feststoffkessel',
             9  : u'Gesperrt, Automatisch',
-            176: u'Gesperrt, Außentemperatur',
+            176: u'Gesperrt,  Température extérieure',
             198: u'Gesperrt, Oekobetrieb',
             10 : u'Gesperrt',
             20 : u'Minimalbegrenzung',
@@ -390,42 +410,43 @@ groups = [
         BsbFieldInt32(0x513D0892, 8570, u'Betr\'stunden Feststoffkessel', **OP_HOURS),
    ]),
     
-    Group(8700, u"8700 Diagnose Verbraucher", [
-        BsbFieldTemperature(0x053d0521, 8700, u'Außentemperatur', ),
-        BsbFieldTemperature(0x053d056f, 8701, u'Außentemperatur Minimum', ),
-        BsbFieldTemperature(0x053d056e, 8702, u'Außentemperatur Maximum', ),
-        BsbFieldTemperature(0x053d05f0, 8703, u'Außentemperatur gedämpft', ),
-        BsbFieldTemperature(0x053d05f2, 8704, u'Außentemperatur gemischt', ),
+    Group(8700, u"8700 Diagnostic Consommateur ", [
+
+
+        BsbFieldTemperature(0x053d056f, 8701, u' Température extérieure Minimum', ),
+        BsbFieldTemperature(0x053d056e, 8702, u' Température extérieure Maximum', ),
+        BsbFieldTemperature(0x053d05f0, 8703, u' Température extérieure gedämpft', ),
+        BsbFieldTemperature(0x053d05f2, 8704, u' Température extérieure gemischt', ),
         # FIXME: wert 255 aus tats. Telegram
-        BsbFieldChoice(0x053D09A5, 8730, u'Heizkreispumpe 1', choices={0:'Aus', 1:'Ein', 255:'Ein'}),
-        BsbFieldChoice(0x053D09A6, 8731, u'Heizkreismischer 1 Auf', choices=['Aus', 'Ein']),
-        BsbFieldChoice(0x053D09A7, 8732, u'Heizkreismischer 1 Zu', choices=['Aus', 'Ein']),
-        BsbFieldInt8(0x213D04A7, 8735, u'Drehzahl Heizkreispumpe 1', unit='%'),
-        BsbFieldTemperature(0x2d3d051e, 8740, u'Raumtemperatur 1', ),
-        BsbFieldTemperature(0x2d3d0593, 8741, u'Raumsollwert 1', ),
-        BsbFieldTemperature(0x213d0518, 8743, u'Vorlauftemperatur 1', ),
-        BsbFieldTemperature(0x213d0667, 8744, u'Vorlaufsollwert 1', ),
-        BsbFieldChoice(0x053D0C7D, 8749, u'Raumthermostat 1', choices=[]),
-        BsbFieldChoice(0x053D09A8, 8760, u'Heizkreispumpe 2', choices={0:'Aus', 1:'Ein', 255:'Ein'}),
-        BsbFieldChoice(0x053D09A9, 8761, u'Heizkreismischer 2 Auf', choices=['Aus', 'Ein']),
-        BsbFieldChoice(0x053D09AA, 8762, u'Heizkreismischer 2 Zu', choices=['Aus', 'Ein']),
-        BsbFieldInt8(0x223D04A7, 8765, u'Drehzahl Heizkreispumpe 2', unit='%'),
-        BsbFieldTemperature(0x2e3d051e, 8770, u'Raumtemperatur 2', ),
+        BsbFieldChoice(0x053D09A5, 8730, u'Circulateur de chauffage 1', choices={0:'Aus', 1:'Ein', 255:'Ein'}),
+        BsbFieldChoice(0x053D09A6, 8731, u'Mélangeur circuit de chauffage 1 Auf', choices=['Aus', 'Ein']),
+        BsbFieldChoice(0x053D09A7, 8732, u'Mélangeur circuit de chauffage 1 Zu', choices=['Aus', 'Ein']),
+        BsbFieldInt8(0x213D04A7, 8735, u'Vitesse Circulateur de chauffage 1', unit='%'),
+        BsbFieldTemperature(0x2d3d051e, 8740, u' Température ambiante 1', ),
+        BsbFieldTemperature(0x2d3d0593, 8741, u'Consigne éco 1', ),
+        BsbFieldTemperature(0x213d0518, 8743, u'Consigne de départ 1', ),
+        BsbFieldTemperature(0x213d0667, 8744, u'Consigne de retour 1', ),
+        BsbFieldChoice(0x053D0C7D, 8749, u'Thermostat ambiant 1', choices=[]),
+        BsbFieldChoice(0x053D09A8, 8760, u'Circulateur de chauffage 2', choices={0:'Aus', 1:'Ein', 255:'Ein'}),
+        BsbFieldChoice(0x053D09A9, 8761, u'Mélangeur circuit de chauffage 2 Auf', choices=['Aus', 'Ein']),
+        BsbFieldChoice(0x053D09AA, 8762, u'Mélangeur circuit de chauffage 2 Zu', choices=['Aus', 'Ein']),
+        BsbFieldInt8(0x223D04A7, 8765, u'Vitesse  pompe de circulation 2', unit='%'),
+        BsbFieldTemperature(0x2e3d051e, 8770, u' Température ambiante 2', ),
         BsbFieldTemperature(0x2e3d0593, 8771, u'Raumsollwert 2', ),
         BsbFieldTemperature(0x223d0518, 8773, u'Vorlauftemperatur 2', ),
         BsbFieldTemperature(0x223d0667, 8774, u'Vorlaufsollwert 2', ),
         BsbFieldChoice(0x063D0C7D, 8779, u'Raumthermostat 2', choices=[]),
-        BsbFieldChoice(0x053D09B0, 8790, u'Heizkreispumpe 3', choices={0:'Aus', 1:'Ein', 255:'Ein'}),
-        BsbFieldChoice(0x053D0AA7, 8791, u'Heizkreismischer 3 Auf', choices=['Aus', 'Ein']),
-        BsbFieldChoice(0x053D0AA8, 8792, u'Heizkreismischer 3 Zu', choices=['Aus', 'Ein']),
-        BsbFieldInt8(0x233D04A7, 8795, u'Drehzahl Heizkreispumpe 3', unit='%'),
+        BsbFieldChoice(0x053D09B0, 8790, u' pompe de circulation 3', choices={0:'Aus', 1:'Ein', 255:'Ein'}),
+        BsbFieldChoice(0x053D0AA7, 8791, u'Mélangeur circuit de chauffage 3 Auf', choices=['Aus', 'Ein']),
+        BsbFieldChoice(0x053D0AA8, 8792, u'Mélangeur circuit de chauffage 3 Zu', choices=['Aus', 'Ein']),
+        BsbFieldInt8(0x233D04A7, 8795, u'Vitesse  Pompe de circulation 3', unit='%'),
         BsbFieldTemperature(0x313d052f, 8830, u'Trinkwassertemperatur 1', ),
    ]),
         
     Group(0, "Unsortiert", [
         # weitere (nicht verifizierte) Eintraege
         BsbField(0x2d3d0574, 10110, u'Setzen RGT HK - 1', ),
-        BsbField(0x2d3d0215, 10109, u'Senden Raumtemperatur', ),
+        BsbField(0x2d3d0215, 10109, u'Senden  Température ambiante', ),
         BsbField(0x2d000211, 10102, u'HK1 - TBD', ),
         BsbField(0x313d0571, 10111, u'Trinkwasserbereitung', ),
         BsbField(0x2e3e0574, 10112, u'Heizbetrieb', ),
@@ -470,20 +491,19 @@ groups = [
         BsbField(0x2d3d067b, 850, u'Estrich-Funktion ', ),
         BsbField(0x2d3d0640, 732, u'Tagesheizgrenze', ),
         BsbField(0x2d3d0614, 760, u'Raumtemperaturbegrenzung', ),
-        BsbField(0x2d3d0610, 721, u'Kennlinie Verschiebung', ),
+
         BsbField(0x2d3d060b, 726, u'Kennlinie Adaption', ),
         BsbField(0x2d3d0609, 791, u'Ausschalt-Optimierung Max', ),
         BsbField(0x2d3d0607, 790, u'Einschalt-Optimierung Max', ),
         BsbField(0x2d3d0603, 750, u'Raumeinfluss', ),
         BsbField(0x2d3d0602, 770, u'Schnellaufheizung', ),
         BsbField(0x2d3d05fd, 730, u'Sommer-/Winterheizgrenze', ),
-        BsbField(0x2d3d05f6, 720, u'Kennlinie Steilheit', ),
+
         BsbField(0x2d3d05e8, 780, u'Schnellabsenkung', ),
         BsbField(0x2d3d059e, 800, u'Reduziert-Anhebung Beginn', ),
         BsbField(0x2d3d059d, 801, u'Reduziert-Anhebung Ende', ),
-        BsbField(0x2d3d0592, 714, u'Frostschutzsollwert', ),
-        BsbField(0x2d3d0590, 712, u'Reduziertsollwert', ),
-        BsbField(0x2d3d058e, 710, u'Komfortsollwert', ),
+
+
         BsbField(0x2d3d04c2, 648, u'Betriebsniveau', ),
         BsbField(0x253d2fe9, 9563, u'Solldrehzahl Durchlasung', ),
         BsbField(0x253d2fe8, 9560, u'Gebl\'ansteuerung Durchlad', ),
@@ -512,7 +532,7 @@ groups = [
         BsbField(0x213d2f8d, 2455, u'Schaltdiff Kessel Aus Min', ),
         BsbField(0x213d2f8c, 2454, u'Schaltdifferenz Kessel', ),
         BsbField(0x213d0663, 740, u'Vorlaufsollwert Minimum', ),
-        BsbField(0x213d0662, 741, u'Vorlaufsollwert Maximum', ),
+
         BsbField(0x193d2fdc, 5761, u'Zonen mit Zubringerpumpe', ),
         BsbField(0x193d2fbf, 2442, u'Gebläse-PWM Reglerverzög', ),
         BsbField(0x193d2f8a, 894, u'dT Spreizung NormAussent', ),
